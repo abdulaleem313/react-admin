@@ -2,6 +2,8 @@
 import React from 'react';
 import { List, Datagrid, Edit, Create, SimpleForm, DateField, TextField, EditButton, DisabledInput, TextInput, LongTextInput, DateInput } from 'react-admin';
  
+import Typography from '@material-ui/core/Typography';
+
 export const PostList = (props) => (
     <List {...props}>
         <Datagrid>
@@ -18,9 +20,16 @@ export const PostList = (props) => (
 const PostTitle = ({ record }) => {
     return <span>Post {record ? `"${record.title}"` : ''}</span>;
 };
-
+const Aside = () => (
+    <div style={{ width: 200, margin: '1em' }}>
+        <Typography variant="title">Post details</Typography>
+        <Typography variant="body1">
+            Posts will only be published one an editor approves them
+        </Typography>
+    </div>
+)
 export const PostEdit = (props) => (
-    <Edit title={<PostTitle />} {...props}>
+    <Edit aside={<Aside />} title={<PostTitle />} {...props}>
         <SimpleForm>
             <DisabledInput source="id" />
             <TextInput source="title" />

@@ -10,7 +10,7 @@ import Menu from './menu';
 import Login from './Login';
 import Logout from './logout';
 
-import { CategoryList, CategoryEdit, CategoryIcon, CategoryCreate } from './categories';
+import { CategoryList, CategoryEdit, CategoryIcon, CategoriesCreate } from './categories';
 
 import customRoutes from './customRoute';
 const httpClient = (url, options = {}) => {
@@ -25,12 +25,12 @@ const httpClient = (url, options = {}) => {
 const dataProvider = simpleRestProvider('http://localhost:3333', httpClient);
  
 
+    // logoutButton={Logout}
 
 const App = () => (
     <Admin 
     customRoutes={customRoutes}
     dashboard={Dashboard} 
-    logoutButton={Logout}
     menu={Menu}
     loginPage={Login}
     dataProvider={dataProvider}>
@@ -41,7 +41,7 @@ const App = () => (
             list={CategoryList}
             edit={CategoryEdit}
             icon={CategoryIcon}
-            create={CategoryCreate}
+            create={CategoriesCreate}
         />
     </Admin>
 );
