@@ -6,6 +6,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import GroupIcon from '@material-ui/icons/Group';
 import { CategoryIcon } from './categories';
  
+import ExitIcon from '@material-ui/icons/PowerSettingsNew';
 
 const Menu = ({ resources, onMenuClick, logout }) => (
     <div> 
@@ -25,6 +26,11 @@ const Menu = ({ resources, onMenuClick, logout }) => (
                 primaryText="Categories"
                 leftIcon={<CategoryIcon />}
                 onClick={onMenuClick} />
+            <MenuItemLink
+                to="/login"
+                primaryText="Logout"
+                leftIcon={<ExitIcon />}
+                onClick={()=> { console.log('logut')}} />
     </div>
 );
 

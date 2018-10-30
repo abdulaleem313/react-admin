@@ -53,8 +53,8 @@ function getSorting(order, orderBy) {
 }
 
 const rows = [
-  { id: 'firstName', numeric: false, disablePadding: true, label: 'First Name' },
-  { id: 'lastName', numeric: false, disablePadding: false, label: 'Last Name' }, 
+  { id: 'email_address', numeric: false, disablePadding: true, label: 'Email' },
+  { id: 'role', numeric: false, disablePadding: false, label: 'Last Name' }, 
 ];
 
 class EnhancedTableHead extends React.Component {
@@ -213,7 +213,8 @@ class EnhancedTable extends React.Component {
 console.log('compodid');
 
     // Make a request for a user with a given ID
-    axios.get('http://localhost:3333/categories')
+    // axios.get('http://localhost:3333/categories')
+    axios.get('http://localhost:3003/api/users')
       .then( (response) => {
         // handle success
         console.log(response);
@@ -317,9 +318,9 @@ console.log('compodid');
                         <Checkbox checked={isSelected} />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        {n.name}
+                        {n.email_address}
                       </TableCell>
-                      <TableCell numeric>{n.calories}</TableCell> 
+                      <TableCell>{n.role==='admin' ? 'i am admin' : 'not admni'}</TableCell> 
                     </TableRow>
                   );
                 })}
@@ -344,7 +345,8 @@ console.log('compodid');
           }}
           onChangePage={this.handleChangePage}
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
-        />
+        />  
+
       </Paper>
     );
   }

@@ -11,15 +11,25 @@ import {
     SimpleForm,
     TextField,
     TextInput,
+    ImageField,
     DateInput,
+    ImageInput,
     DateField,
     DisabledInput,
     LongTextInput,
+    Filter,
+    FileInput,
+    FileField,
+    SelectInput,
+    BooleanInput,
+    FormDataConsumer,
 } from 'react-admin'; 
- 
+import Dropzone from 'react-dropzone'
 import withStyles from '@material-ui/core/styles/withStyles';
 import Icon from '@material-ui/icons/Bookmark';
 import Typography from '@material-ui/core/Typography';
+
+import axios from 'axios';
 
 import Button from '@material-ui/core/Button';
 import { CardActions, CreateButton, ExportButton, RefreshButton, DeleteButton } from 'react-admin';
@@ -59,22 +69,20 @@ const PostActions = ({
             filterValues,
             context: 'button',
         }) }
-        <CreateButton basePath='/categories' />
-        <ExportButton
-            resource={resource}
-            sort={currentSort}
-            filter={filterValues}
-            exporter={exporter}
-        /> 
-        <RefreshButton /> 
+        <CreateButton basePath='/categories' /> 
     </CardActions>
 );
-
+const PostFilter = (props) => (
+    <Filter {...props}>
+        <TextInput label="Search" source="q" alwaysOn />  
+    </Filter>
+);
 export const CategoryList = withStyles(listStyles)(({ classes, ...props }) => (
-    <List {...props}  actions={<PostActions/>} sort={{ field: 'name', order: 'ASC' }}>
+    <List {...props}  filters={<PostFilter />}  actions={<PostActions/>}  bulkActionButtons ={null} sort={{ field: 'name', order: 'ASC' }}>
         <Datagrid>
             <TextField source="name" className={classes.name} /> 
             <EditButton />
+            <DeleteButton/>
         </Datagrid>
     </List>
 ));
@@ -111,13 +119,56 @@ export const CategoryEdit = props => {
         </SimpleForm>
     </Edit>
 )};
-
+const fileDroped = (props) => {
+    console.log('props')
+}
 export const CategoriesCreate = (props) => {
- 
+    console.log('categ', props)
     return (
     <Create title={<CategoryTitle />} redirect="view" {...props}>
         <SimpleForm  >
             <TextInput source="name" /> 
+            <TextInput source="description" />  
+            
+            <FormDataConsumer> 
+                {({ formData, ...rest }) => { 
+                    console.log('hi forj', formData)
+                    return <ImageInput  
+                    source="pictures" label="Related pictures" accept="image/*" 
+                    options ={
+                        {
+                            onDrop: (files, b, c)=>{
+                                let data = new FormData();
+                                data.append('file', files[0], files[0].name); 
+
+                                    const config = {
+                                        headers: { 'content-type': 'multipart/form-data' }
+                                    }
+                                    axios.post('https://www.favoriterun.com/api/upload', data, config)
+                            
+                            
+                            console.log('drop is called', files); 
+                            return files;} }
+                    } >
+                        <ImageField source="src" title="title" />
+                    </ImageInput> 
+                }}
+            </FormDataConsumer> 
+            <SelectInput source="category" choices={[
+                { id: 'programming', name: 'Programming' },
+                { id: 'lifestyle', name: 'Lifestyle' },
+                { id: 'photography', name: 'Photography' },
+            ]} />
+            
+            <BooleanInput source="hasEmail" />
+             <FormDataConsumer> 
+                 {({ formData, ...rest }) => { 
+                     console.log(formData)
+                     formData.imageName = formData.pictures ? formData.pictures.title: '';
+                     return formData.hasEmail &&
+                 <TextInput source="email" {...rest} /> }
+                 }
+             </FormDataConsumer>
         </SimpleForm>
     </Create>
 )};

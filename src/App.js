@@ -33,9 +33,10 @@ const App = () => (
     dashboard={Dashboard} 
     menu={Menu}
     loginPage={Login}
+    logoutButton={Logout}
     dataProvider={dataProvider}>
         <Resource name="posts" options={{ label: 'data' }} list={PostList} />
-        <Resource name="user1s" list={PostList} /> 
+        <Resource name="users" list={PostList} /> 
         <Resource
             name="categories"
             list={CategoryList}
