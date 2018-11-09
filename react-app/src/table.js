@@ -215,7 +215,7 @@ const styles = theme => ({
     margin: '20px;'
   },
   createButton: {
-    margin: '10px'
+    margin: '20px'
   }
 });
 

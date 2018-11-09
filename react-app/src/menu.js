@@ -17,13 +17,13 @@ const Menu = ({ resources, onMenuClick, logout }) => (
             onClick={onMenuClick} />
             <MenuItemLink
                 to="/users"
-                primaryText="Users"
+                primaryText="Users (custom table)"
                 leftIcon={<GroupIcon />}
                 onClick={onMenuClick} />
                 
             <MenuItemLink
                 to="/categories"
-                primaryText="Categories"
+                primaryText="Categories (Data table)"
                 leftIcon={<CategoryIcon />}
                 onClick={onMenuClick} />
             <MenuItemLink
