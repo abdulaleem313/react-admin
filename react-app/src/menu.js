@@ -17,7 +17,7 @@ const Menu = ({ resources, onMenuClick, logout }) => (
             onClick={onMenuClick} />
             <MenuItemLink
                 to="/users"
-                primaryText="Users (custom table)"
+                primaryText="Users (Custom table)"
                 leftIcon={<GroupIcon />}
                 onClick={onMenuClick} />
                 

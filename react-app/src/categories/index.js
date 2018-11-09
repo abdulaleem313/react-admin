@@ -33,6 +33,8 @@ import Typography from '@material-ui/core/Typography';
 import axios from 'axios';
 
 import Button from '@material-ui/core/Button';
+import CardMedia from '@material-ui/core/CardMedia';
+
 import { CardActions, CreateButton, ExportButton, RefreshButton, DeleteButton } from 'react-admin';
 
 export const CategoryIcon = Icon;
@@ -122,11 +124,15 @@ const fileDroped = (props) => {
 }
 export const CategoriesCreate = (props) => {
     console.log('categ', props)
+    let uploadurl = 'https://www.favoriterun.com/api/upload';
+    let s3Url = 'https://favoriterun.s3.amazonaws.com/images/';
+    let imgUrl = s3Url + '009ec5f0-e41d-11e8-ac70-7d9bca0ad2e5.png';
+
     return (
     <Create title={<CategoryTitle />} redirect="view" {...props}>
         <SimpleForm  >
             <TextInput source="name" /> 
-            {/* <TextInput source="description" />  
+            <TextInput source="description" />  
             
             <FormDataConsumer> 
                 {({ formData, ...rest }) => {
@@ -135,33 +141,39 @@ export const CategoriesCreate = (props) => {
                         options ={
                             {
                                 onDrop: (files,b, c)=>{ 
+                                    console.log(files)
                                     let data = new FormData();
                                     data.append('file', files[0], files[0].name); 
                                     const config = {
                                         headers: { 'content-type': 'multipart/form-data' }
                                     }
-                                    axios.post('https://www.favoriterun.com/api/upload', data, config).then(resp=>{
-                                        formData.imgSrc = 'https://favoriterun.s3.amazonaws.com/images/' + resp.data.data;
+                                    axios.post(uploadurl, data, config).then(resp=>{
+                                        formData.src = s3Url + resp.data.data;
+                                        // console.log(formData) 
+                                        // this.setState({src: formData.src }) ;
+                                        
+
                                     })  
                                     return files
                                 }
                             }
                         } > 
-                        <ImageField source="src" title="title" />
+                        <ImageField source="src" src="url" title="title" />
                     </ImageInput>  
                 }}
-            </FormDataConsumer>  */}
+            </FormDataConsumer> 
             {/* <SelectInput source="category" choices={[
                 { id: 'programming', name: 'Programming' },
                 { id: 'lifestyle', name: 'Lifestyle' },
                 { id: 'photography', name: 'Photography' },
             ]} /> */}
             {/* <BooleanInput source="hasEmail" /> */}
-            {/* <FormDataConsumer> 
+            <FormDataConsumer> 
                 {({ formData, ...rest }) => { 
+                    console.log(formData)
                     return formData.description ==='showEmail' &&
                 <TextInput source="email" {...rest} /> }}
-            </FormDataConsumer> */}
+            </FormDataConsumer>
             {/* <DateTimeInput validate={(v)=>console.log(v)} source="published_at" /> */}
         </SimpleForm>
     </Create>
