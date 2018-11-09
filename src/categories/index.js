@@ -23,6 +23,7 @@ import {
     SelectInput,
     BooleanInput,
     FormDataConsumer,
+    DateTimeInput,
 } from 'react-admin'; 
 import Dropzone from 'react-dropzone'
 import withStyles from '@material-ui/core/styles/withStyles';
@@ -88,10 +89,7 @@ export const CategoryList = withStyles(listStyles)(({ classes, ...props }) => (
 ));
 
 const CategoryTitle = translate(({ record, translate }) => (
-    <span>
-        {translate('resources.categories.name', { smart_count: 1 })} &quot;{
-            record.name
-        }&quot;
+    <span>Category
     </span>
 ));
 const handleSubmit = function(d) { 
@@ -114,7 +112,7 @@ export const CategoryEdit = props => {
     console.log(props)
     return (
     <Edit  title={<CategoryTitle />}  {...props}>
-        <SimpleForm handleSubmit={handleSubmit}>
+        <SimpleForm>
             <TextInput source="name" />  
         </SimpleForm>
     </Edit>
@@ -128,47 +126,43 @@ export const CategoriesCreate = (props) => {
     <Create title={<CategoryTitle />} redirect="view" {...props}>
         <SimpleForm  >
             <TextInput source="name" /> 
-            <TextInput source="description" />  
+            {/* <TextInput source="description" />  
             
             <FormDataConsumer> 
-                {({ formData, ...rest }) => { 
-                    console.log('hi forj', formData)
+                {({ formData, ...rest }) => {
                     return <ImageInput  
-                    source="pictures" label="Related pictures" accept="image/*" 
-                    options ={
-                        {
-                            onDrop: (files, b, c)=>{
-                                let data = new FormData();
-                                data.append('file', files[0], files[0].name); 
-
+                        source="pictures" label="Related pictures" accept="image/*" 
+                        options ={
+                            {
+                                onDrop: (files,b, c)=>{ 
+                                    let data = new FormData();
+                                    data.append('file', files[0], files[0].name); 
                                     const config = {
                                         headers: { 'content-type': 'multipart/form-data' }
                                     }
-                                    axios.post('https://www.favoriterun.com/api/upload', data, config)
-                            
-                            
-                            console.log('drop is called', files); 
-                            return files;} }
-                    } >
+                                    axios.post('https://www.favoriterun.com/api/upload', data, config).then(resp=>{
+                                        formData.imgSrc = 'https://favoriterun.s3.amazonaws.com/images/' + resp.data.data;
+                                    })  
+                                    return files
+                                }
+                            }
+                        } > 
                         <ImageField source="src" title="title" />
-                    </ImageInput> 
+                    </ImageInput>  
                 }}
-            </FormDataConsumer> 
-            <SelectInput source="category" choices={[
+            </FormDataConsumer>  */}
+            {/* <SelectInput source="category" choices={[
                 { id: 'programming', name: 'Programming' },
                 { id: 'lifestyle', name: 'Lifestyle' },
                 { id: 'photography', name: 'Photography' },
-            ]} />
-            
-            <BooleanInput source="hasEmail" />
-             <FormDataConsumer> 
-                 {({ formData, ...rest }) => { 
-                     console.log(formData)
-                     formData.imageName = formData.pictures ? formData.pictures.title: '';
-                     return formData.hasEmail &&
-                 <TextInput source="email" {...rest} /> }
-                 }
-             </FormDataConsumer>
+            ]} /> */}
+            {/* <BooleanInput source="hasEmail" /> */}
+            {/* <FormDataConsumer> 
+                {({ formData, ...rest }) => { 
+                    return formData.description ==='showEmail' &&
+                <TextInput source="email" {...rest} /> }}
+            </FormDataConsumer> */}
+            {/* <DateTimeInput validate={(v)=>console.log(v)} source="published_at" /> */}
         </SimpleForm>
     </Create>
 )};

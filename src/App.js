@@ -9,6 +9,9 @@ import { PostList } from './posts';
 import Menu from './menu';
 import Login from './Login';
 import Logout from './logout';
+import authProvider from './authProvider';
+import axios from './http-interceptor';
+
 
 import { CategoryList, CategoryEdit, CategoryIcon, CategoriesCreate } from './categories';
 
@@ -22,6 +25,7 @@ const httpClient = (url, options = {}) => {
     // options.headers.set('Content-Range', 'posts 0-24/319');
     return fetchUtils.fetchJson(url, options);
 }
+// http://52.52.236.205:4000/documentation#/
 const dataProvider = simpleRestProvider('http://localhost:3333', httpClient);
  
 
@@ -32,8 +36,8 @@ const App = () => (
     customRoutes={customRoutes}
     dashboard={Dashboard} 
     menu={Menu}
-    loginPage={Login}
-    logoutButton={Logout}
+    authProvider={authProvider}
+    loginPage={Login} 
     dataProvider={dataProvider}>
         <Resource name="posts" options={{ label: 'data' }} list={PostList} />
         <Resource name="users" list={PostList} /> 
@@ -43,7 +47,7 @@ const App = () => (
             edit={CategoryEdit}
             icon={CategoryIcon}
             create={CategoriesCreate}
-        />
+        />  
     </Admin>
 );
 

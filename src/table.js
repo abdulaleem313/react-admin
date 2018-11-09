@@ -19,8 +19,10 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import Button from '@material-ui/core/Button';
-
-const axios = require('axios');
+import TextField from '@material-ui/core/TextField';
+import { Authenticated, LinearProgress  } from 'react-admin';
+import { Route, Redirect } from 'react-router'
+import axios from './http-interceptor';
 
 let counter = 0;
 function createData(name, calories, fat, carbs, protein) {
@@ -53,8 +55,8 @@ function getSorting(order, orderBy) {
 }
 
 const rows = [
-  { id: 'email_address', numeric: false, disablePadding: true, label: 'Email' },
-  { id: 'role', numeric: false, disablePadding: false, label: 'Last Name' }, 
+  { id: 'zf_name', numeric: false, disablePadding: false, label: 'Name' }, 
+  { id: 'zf_email', numeric: false, disablePadding: true, label: 'Email' },
 ];
 
 class EnhancedTableHead extends React.Component {
@@ -65,22 +67,22 @@ class EnhancedTableHead extends React.Component {
   render() {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount } = this.props;
 
+    console.log('my props', this.props)
     return (
       <TableHead>
         <TableRow>
-          <TableCell padding="checkbox">
+          {/* <TableCell padding="checkbox">
             <Checkbox
               indeterminate={numSelected > 0 && numSelected < rowCount}
               checked={numSelected === rowCount}
               onChange={onSelectAllClick}
             />
-          </TableCell>
+          </TableCell> */}
           {rows.map(row => {
             return (
               <TableCell
                 key={row.id}
-                numeric={row.numeric}
-                padding={row.disablePadding ? 'none' : 'default'}
+                numeric={row.numeric} 
                 sortDirection={orderBy === row.id ? order : false}
               >
                 <Tooltip
@@ -108,7 +110,7 @@ class EnhancedTableHead extends React.Component {
 EnhancedTableHead.propTypes = {
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
+  // onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.string.isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
@@ -189,37 +191,73 @@ EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar);
 const styles = theme => ({
   root: {
     width: '100%',
-    marginTop: theme.spacing.unit * 3,
+    // marginTop: theme.spacing.unit * 3,
+    height: '100vh',
+    position: 'relative'
   },
   table: {
     minWidth: 1020,
   },
   tableWrapper: {
     overflowX: 'auto',
+    position: 'relative'
   },
+  tableToolBar : {
+    justifyContent: 'space-between',
+    display: 'flex',
+  },
+  linearProgress: {
+    width: '100%', 
+    position: 'absolute',
+    marginTop: 0
+  },
+  textField: {
+    margin: '20px;'
+  },
+  createButton: {
+    margin: '10px'
+  }
 });
 
 class EnhancedTable extends React.Component {
   state = {
-    order: 'asc',
+    order: 'desc',
     orderBy: 'calories',
+    sort: 'zf_id' , 
     selected: [],
     data: [ 
     ],
     page: 0,
     rowsPerPage: 5,
+    totalCount: 0,
+    search: '',
+    showLoading: false, 
+    redirectToEditUser: false,
+    redirectToCreateUser: false,
   };
-  componentDidMount = () => {
-console.log('compodid');
-
-    // Make a request for a user with a given ID
+  componentDidMount = () => { 
+    this.getData();
+  }
+  getData = () => {
+    this.setState({showLoading: true})
+        // Make a request for a user with a given ID
     // axios.get('http://localhost:3333/categories')
-    axios.get('http://localhost:3003/api/users')
+    // http://localhost:3000/api/users?page=1&limit=1
+    // axios.get(`http://localhost:3003/api/users?_p=${this.state.page + 1}&_size=${this.state.rowsPerPage}`)
+    let reqUrl = `http://52.52.236.205:4000/api/users?page=${this.state.page + 1}&limit=${this.state.rowsPerPage}&sort=${this.state.sort}&order=${this.state.order}`;
+    if (this.state.search !== undefined && this.state.search !== '') {
+      reqUrl += `&search=${this.state.search}`;
+    }
+    axios.get(reqUrl, {})
+
       .then( (response) => {
-        // handle success
-        console.log(response);
-        console.log(response);
-        this.setState({data:response.data})
+        // handle success 
+        console.log(response); 
+        this.setState({
+          showLoading: false,
+          data: response.data.data,
+          totalCount: response.data.metadata.totalCount
+        })
       })
       .catch( (error) => {
         // handle error
@@ -228,10 +266,9 @@ console.log('compodid');
       .then(function () {
         // always executed
       });
-
   }
   handleRequestSort = (event, property) => {
-    
+    console.log(event, property)
     const orderBy = property;
     let order = 'desc';
 
@@ -240,6 +277,9 @@ console.log('compodid');
     }
 
     this.setState({ order, orderBy });
+    this.setState({ sort: property });
+    this.getData();
+
   };
 
   handleSelectAllClick = event => {
@@ -266,75 +306,121 @@ console.log('compodid');
         selected.slice(0, selectedIndex),
         selected.slice(selectedIndex + 1),
       );
-    }
-
+    } 
     this.setState({ selected: newSelected });
   };
 
   handleChangePage = (event, page) => {
     this.setState({ page });
+    setTimeout(()=>{
+      console.log(this.state.page)
+      this.getData();
+    }, 0);
   };
 
   handleChangeRowsPerPage = event => {
+    console.log(event)
     this.setState({ rowsPerPage: event.target.value });
+    setTimeout(()=>{
+      console.log(this.state.page)
+      this.getData();
+    }, 0);
+  };
+  handleChange = name => event => { 
+    this.setState({
+      [name]: event.target.value,
+    });
+    setTimeout(()=>{ 
+      this.getData();
+    }, 0);
   };
 
   isSelected = id => this.state.selected.indexOf(id) !== -1;
-
+  redirectToCreateUser = ()=> {
+    console.log('redir')
+    this.setState({redirectToCreateUser: true});
+  }
+  editUser = (n)=> (e) => {
+    console.log('editUser:', n, e)
+    this.setState({redirectToEditUser: true, userId: n.zf_id});
+  }
   render() {
     const { classes } = this.props;
-    const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
+    console.log('my props', this.props)
+    const { data, order, orderBy, selected, rowsPerPage, page, totalCount } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+    let IsLoading = <div className={classes.linearProgress}></div>  
+    if (this.state.showLoading) {
+      IsLoading = <LinearProgress  className={classes.linearProgress}/>
+      console.log('show loading')
+    }
+    console.log('sdsdshow loading')
+ 
+    let a = (
+    <Authenticated authParams={{ role: 'admin' }}>
+      <Paper className={classes.root}>
+      {IsLoading}
+        <div className={classes.tableWrapper}> 
+        
+          <div className={classes.tableToolBar}>
 
-    return (
-      <Paper className={classes.root}> 
-        <Button color="primary secondary" > <DeleteIcon /> Add User</Button>
-        <div className={classes.tableWrapper}>
+            <TextField source="search" 
+            value={this.state.search}
+            placeholder="search"
+            onChange={this.handleChange('search')}
+            className={classes.textField} />
+ 
+            <Button variant="outlined" color="secondary" className={classes.createButton} onClick={this.redirectToCreateUser}>
+              Create User
+            </Button>
+
+          </div>
+
           <Table className={classes.table} aria-labelledby="tableTitle">
             <EnhancedTableHead
               numSelected={selected.length}
               order={order}
-              orderBy={orderBy}
-              onSelectAllClick={this.handleSelectAllClick}
+              orderBy={orderBy} 
               onRequestSort={this.handleRequestSort}
               rowCount={data.length}
             />
             <TableBody>
-              {stableSort(data, getSorting(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map(n => {
-                  const isSelected = this.isSelected(n.id);
+              {
+                // stableSort(data, getSorting(order, orderBy))
+                // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                data.map(n => {
+                  // console.log('is called with', n)
+                  const isSelected = this.isSelected(n.zf_id);
                   return (
                     <TableRow
                       hover
-                      onClick={event => this.handleClick(event, n.id)}
+                      onClick={event => this.handleClick(event, n.zf_id)}
                       role="checkbox"
                       aria-checked={isSelected}
                       tabIndex={-1}
-                      key={n.id}
+                      key={n.zf_id}
                       selected={isSelected}
                     >
-                      <TableCell padding="checkbox">
+                      {/* <TableCell padding="checkbox">
                         <Checkbox checked={isSelected} />
+                      </TableCell> */}
+                      <TableCell component="th" scope="row" onClick={this.editUser(n)}>
+                        {n.zf_name}
                       </TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        {n.email_address}
+                      <TableCell component="th" scope="row" >
+                        {n.zf_email}
                       </TableCell>
-                      <TableCell>{n.role==='admin' ? 'i am admin' : 'not admni'}</TableCell> 
+                      {/* <TableCell>{n.role==='admin' ? 'i am admin' : 'not admni'}</TableCell>  */}
                     </TableRow>
                   );
                 })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 49 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
+
             </TableBody>
           </Table>
         </div>
         <TablePagination
           component="div"
-          count={data.length}
+          count={totalCount}
           rowsPerPage={rowsPerPage}
           page={page}
           backIconButtonProps={{
@@ -348,7 +434,17 @@ console.log('compodid');
         />  
 
       </Paper>
+      </Authenticated>
     );
+    console.log('this.state.redirectToCreateUser', this.state.redirectToCreateUser)
+    if(this.state.redirectToCreateUser) {
+      a = <Redirect to="/create-user"/>
+    }
+    if(this.state.redirectToEditUser) {
+      let link = '/update-user/' + this.state.userId;
+      a = <Redirect to={link}/>
+    }
+    return a;
   }
 }
 

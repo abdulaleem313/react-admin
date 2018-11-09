@@ -29,8 +29,9 @@ const styles = theme => ({
         backgroundSize: 'cover',
     },
     card: {
-        minWidth: 300,
+        minWidth: 400,
         marginTop: '6em',
+        minHeight: 400
     },
     avatar: {
         margin: '1em',
@@ -85,13 +86,7 @@ class Login extends Component {
     }
     login = auth => {
         console.log('asdf', auth);
-        console.log('asdf', this.props);
-        // this.props.location.pathname = '/'
-        if(auth.username === 'demo'){
-            return this.props.history.replace('/dashboard');
-        } else {
-            this.setState({isError: true});
-        }
+        console.log('asdf', this.props); 
         return this.props.userLogin(
             auth,
             this.props.location.state
@@ -101,11 +96,10 @@ class Login extends Component {
     }
 
     render() {
-        const { classes, handleSubmit, isLoading, translate } = this.props;
-        let ErrorShow = ''
-        if (this.state.isError) {
-            ErrorShow =  <div className={classes.errorClass}>Something is wrong</div>
-        } 
+        const { classes, handleSubmit, isLoading, translate } = this.props; 
+const email = value =>
+value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) ?
+'Invalid email address' : undefined
         return (
             <div className={classes.main}>
                 <Card className={classes.card}>
@@ -115,14 +109,13 @@ class Login extends Component {
                         </Avatar>
                     </div>
                     <form onSubmit={handleSubmit(this.login)} redirect='/#/dashboard'>
-                        <div className={classes.hint}>Hint: demo / demo</div>
-                        {ErrorShow}
+                        <div className={classes.hint}>Hint: demo@demo.com / asdf1234</div> 
                         <div className={classes.form}>
                             <div className={classes.input}>
                                 <Field
                                     name="username"
-                                    component={renderInput}
-                                    label={translate('ra.auth.username')}
+                                    component={renderInput} 
+                                    label='Email'
                                     disabled={isLoading}
                                 />
                             </div>
@@ -130,7 +123,7 @@ class Login extends Component {
                                 <Field
                                     name="password"
                                     component={renderInput}
-                                    label={translate('ra.auth.password')}
+                                    label='Password'
                                     type="password"
                                     disabled={isLoading}
                                 />
@@ -174,7 +167,7 @@ const enhance = compose(
     translate,
     reduxForm({
         form: 'signIn',
-        validate: (values, props) => {
+        validate: (values, props) => { 
             const errors = {};
             const { translate } = props;
             if (!values.username) {

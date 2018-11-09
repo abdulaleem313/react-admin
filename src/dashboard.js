@@ -6,6 +6,6 @@ import SimpleTable from './table';
 export default () => (
     <Card>
         <Title title="Welcome to the administration" />
-        <CardContent>Lorem ipsum sic dolor amet...</CardContent>
+        <CardContent>Welcome to admin</CardContent>
     </Card>
 );
