@@ -73,6 +73,7 @@ const PostActions = ({
             context: 'button',
         }) }
         <CreateButton basePath='/categories' /> 
+        {/* <CreateButton basePath='/category' />  */}
     </CardActions>
 );
 const PostFilter = (props) => (
@@ -124,9 +125,12 @@ const fileDroped = (props) => {
 }
 export const CategoriesCreate = (props) => {
     console.log('categ', props)
-    let uploadurl = 'https://www.favoriterun.com/api/upload';
-    let s3Url = 'https://favoriterun.s3.amazonaws.com/images/';
-    let imgUrl = s3Url + '009ec5f0-e41d-11e8-ac70-7d9bca0ad2e5.png';
+    let uploadurl = 'http://52.52.236.205:4000/api/upload/s3/category';
+    // let uploadurl = 'https://www.favoriterun.com/api/upload';
+    // let s3Url = 'https://favoriterun.s3.amazonaws.com/images/'; 
+
+    let categoriesThumbnailsPath =  "https://s3-us-west-1.amazonaws.com/zenfoods/categories/thumbnail/";
+    let categoriesImagePath = "https://s3-us-west-1.amazonaws.com/zenfoods/categories/thumbnail/";
 
     return (
     <Create title={<CategoryTitle />} redirect="view" {...props}>
@@ -136,6 +140,7 @@ export const CategoriesCreate = (props) => {
             
             <FormDataConsumer> 
                 {({ formData, ...rest }) => {
+                    console.log('rest', rest)
                     return <ImageInput  
                         source="pictures" label="Related pictures" accept="image/*" 
                         options ={
@@ -143,18 +148,17 @@ export const CategoriesCreate = (props) => {
                                 onDrop: (files,b, c)=>{ 
                                     console.log(files)
                                     let data = new FormData();
-                                    data.append('file', files[0], files[0].name); 
+                                    data.append('image', files[0], files[0].name); 
                                     const config = {
                                         headers: { 'content-type': 'multipart/form-data' }
                                     }
                                     axios.post(uploadurl, data, config).then(resp=>{
-                                        formData.src = s3Url + resp.data.data;
+                                        formData.src = categoriesThumbnailsPath + resp.data.data;
                                         // console.log(formData) 
                                         // this.setState({src: formData.src }) ;
                                         
-
                                     })  
-                                    return files
+                                    return axios
                                 }
                             }
                         } > 
@@ -170,7 +174,7 @@ export const CategoriesCreate = (props) => {
             {/* <BooleanInput source="hasEmail" /> */}
             <FormDataConsumer> 
                 {({ formData, ...rest }) => { 
-                    console.log(formData)
+                    console.log('FormDataConsumer:', formData)
                     return formData.description ==='showEmail' &&
                 <TextInput source="email" {...rest} /> }}
             </FormDataConsumer>
