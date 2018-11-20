@@ -115,7 +115,38 @@ export const CategoryEdit = props => {
     return (
     <Edit  title={<CategoryTitle />}  {...props}>
         <SimpleForm>
-            <TextInput source="name" />  
+            <TextInput source="name" /> 
+            <TextInput source="description" />  
+             
+            <SelectInput source="type" choices={[
+                { id: 'programming', name: 'Programming' },
+                { id: 'lifestyle', name: 'Lifestyle' },
+                { id: 'photography', name: 'Photography' },
+            ]} />
+            <BooleanInput source="makeLive" />
+            <FormDataConsumer> 
+                {({ formData, ...rest }) => { 
+                    if(formData && !formData.whoCanDelete) { formData.whoCanDelete = []; }
+                    console.log('FormDataConsumer:', formData)
+                    return formData.makeLive &&
+                <DateInput validate={(v)=>console.log(v)} source="published_at" label="Expiry date" /> }}
+            </FormDataConsumer>
+            <CheckboxGroupInput source="whoCanDelete" label="Who can delete this category" choices={[
+                { id: 'admin', name: 'Admin' },
+                { id: 'customer', name: 'Customer Service' },
+                { id: 'delivery', name: 'Delivery' },
+            ]} />
+            <RadioButtonGroupInput source="taxable" label="Taxable?" choices={[
+                { id: 'yes', name: 'Yes' },
+                { id: 'no', name: 'No' },
+            ]} />
+            <SelectArrayInput label="Tags" source="categoryLabels" choices={[
+                { id: 'music', name: 'Music' },
+                { id: 'photography', name: 'Photo' },
+                { id: 'programming', name: 'Code' },
+                { id: 'tech', name: 'Technology' },
+                { id: 'sport', name: 'Sport' },
+            ]} />
         </SimpleForm>
     </Edit>
 )};
