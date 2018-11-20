@@ -91,7 +91,7 @@ class TextFields extends React.Component {
         const { classes } = this.props;
         return (
             <Card>
-                <Title title="Create Category" />  
+                <Title title="Create Category (simple form)" />  
                 <CardContent className={classes.container}>
                  
                     <TextField

@@ -23,8 +23,7 @@ import {
     SelectInput,
     BooleanInput,
     FormDataConsumer,
-    DateTimeInput,
-} from 'react-admin'; 
+    DateTimeInput, CheckboxGroupInput, RadioButtonGroupInput, SelectArrayInput } from 'react-admin'; 
 import Dropzone from 'react-dropzone'
 import withStyles from '@material-ui/core/styles/withStyles';
 import Icon from '@material-ui/icons/Bookmark';
@@ -131,7 +130,7 @@ export const CategoriesCreate = (props) => {
 
     let categoriesThumbnailsPath =  "https://s3-us-west-1.amazonaws.com/zenfoods/categories/thumbnail/";
     let categoriesImagePath = "https://s3-us-west-1.amazonaws.com/zenfoods/categories/thumbnail/";
-
+    // console.log('categories', this.props);
     return (
     <Create title={<CategoryTitle />} redirect="view" {...props}>
         <SimpleForm  >
@@ -166,19 +165,35 @@ export const CategoriesCreate = (props) => {
                     </ImageInput>  
                 }}
             </FormDataConsumer> 
-            {/* <SelectInput source="category" choices={[
+            <SelectInput source="type" choices={[
                 { id: 'programming', name: 'Programming' },
                 { id: 'lifestyle', name: 'Lifestyle' },
                 { id: 'photography', name: 'Photography' },
-            ]} /> */}
-            {/* <BooleanInput source="hasEmail" /> */}
+            ]} />
+            <BooleanInput source="makeLive" />
             <FormDataConsumer> 
                 {({ formData, ...rest }) => { 
+                    if(formData && !formData.whoCanDelete) { formData.whoCanDelete = []; }
                     console.log('FormDataConsumer:', formData)
-                    return formData.description ==='showEmail' &&
-                <TextInput source="email" {...rest} /> }}
+                    return formData.makeLive &&
+                <DateInput validate={(v)=>console.log(v)} source="published_at" label="Expiry date" /> }}
             </FormDataConsumer>
-            {/* <DateTimeInput validate={(v)=>console.log(v)} source="published_at" /> */}
+            <CheckboxGroupInput source="whoCanDelete" label="Who can delete this category" choices={[
+                { id: 'admin', name: 'Admin' },
+                { id: 'customer', name: 'Customer Service' },
+                { id: 'delivery', name: 'Delivery' },
+            ]} />
+            <RadioButtonGroupInput source="taxable" label="Taxable?" choices={[
+                { id: 'yes', name: 'Yes' },
+                { id: 'no', name: 'No' },
+            ]} />
+            <SelectArrayInput label="Tags" source="categoryLabels" choices={[
+                { id: 'music', name: 'Music' },
+                { id: 'photography', name: 'Photo' },
+                { id: 'programming', name: 'Code' },
+                { id: 'tech', name: 'Technology' },
+                { id: 'sport', name: 'Sport' },
+            ]} />
         </SimpleForm>
     </Create>
 )};
