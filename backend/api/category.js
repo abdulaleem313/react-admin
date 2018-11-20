@@ -1,6 +1,6 @@
 
 const categoryList = [
-    { id: 0, name: 'category 0'},
+    { id: 0, name: 'category 0', description: 'some description here'},
     // { id: 1, name: 'category 1' },
     // { id: 2, name: 'category 2' }, 
     // { id: 3,  name: 'category 3'}, 
@@ -72,7 +72,7 @@ const categoryList = [
           auth: false,
           handler: function (request, reply) {
             console.log(request.params);
-            const response = reply.response(categoryList[request.params.id]);
+            const response = reply.response(categoryList[+request.params.id]);
             response.header('Access-Control-Expose-Headers', 'Content-Range');
             response.header('Content-Range','posts : 0-4/' + categoryList.length);
             return response;
@@ -108,7 +108,7 @@ const categoryList = [
           auth: false,
           handler: function (request, reply) {
             console.log(request.payload);
-            categoryList[+request.payload.id].name = request.payload.name;
+            categoryList[+request.payload.id] = request.payload;
             // const response = reply(categoryList[request.params.id]);
             const response = reply.response({id: request.payload.id});
             response.header('Access-Control-Expose-Headers', 'Content-Range');

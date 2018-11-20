@@ -1,6 +1,5 @@
 import React from 'react';
-import {
-    translate,
+import { 
     Datagrid,
     Edit,
     EditButton,
@@ -84,13 +83,14 @@ export const CategoryList = withStyles(listStyles)(({ classes, ...props }) => (
     <List {...props}  filters={<PostFilter />}  actions={<PostActions/>}  bulkActionButtons ={null} sort={{ field: 'name', order: 'ASC' }}>
         <Datagrid>
             <TextField source="name" className={classes.name} /> 
+            <TextField source="description" className={classes.name} />  
             <EditButton />
             <DeleteButton/>
         </Datagrid>
     </List>
 ));
 
-const CategoryTitle = translate(({ record, translate }) => (
+const CategoryTitle = (() => (
     <span>Category
     </span>
 ));
