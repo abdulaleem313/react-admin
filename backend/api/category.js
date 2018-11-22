@@ -89,9 +89,9 @@ const categoryList = [
           auth: false,
           handler: function (request, reply) {
             console.log(request.params);
-            categoryList.splice(request.params.id, 1);
+            categoryList.splice(+request.params.id, 1);
             console.log('after splice: ', categoryList);
-            const response = reply.response(categoryList);
+            const response = reply.response({id:request.params.id });
             response.header('Access-Control-Expose-Headers', 'Content-Range');
             response.header('Content-Range','posts : 0-4/' + categoryList.length);
             return response;
