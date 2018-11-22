@@ -148,6 +148,9 @@ export const CategoryEdit = props => {
                 { id: 'photography', name: 'Photography' },
             ]} />
             <BooleanInput source="makeLive" />
+            <ImageInput source="pictures" label="Related pictures" accept="image/*">
+                <ImageField source="src" title="title" />
+            </ImageInput>
             <FormDataConsumer> 
                 {({ formData, ...rest }) => { 
                     if(formData && !formData.whoCanDelete) { formData.whoCanDelete = []; }
@@ -199,26 +202,7 @@ export const CategoriesCreate = (props) => {
                 {({ formData, ...rest }) => {
                     console.log('rest', rest)
                     return <ImageInput  
-                        source="pictures" label="Related pictures" accept="image/*" 
-                        options ={
-                            {
-                                onDrop: (files,b, c)=>{ 
-                                    console.log(files)
-                                    let data = new FormData();
-                                    data.append('image', files[0], files[0].name); 
-                                    const config = {
-                                        headers: { 'content-type': 'multipart/form-data' }
-                                    }
-                                    axios.post(uploadurl, data, config).then(resp=>{
-                                        formData.src = categoriesThumbnailsPath + resp.data.data;
-                                        // console.log(formData) 
-                                        // this.setState({src: formData.src }) ;
-                                        
-                                    })  
-                                    return axios
-                                }
-                            }
-                        } > 
+                        source="pictures" label="Related pictures" accept="image/*"   > 
                         <ImageField source="src" src="url" title="title" />
                     </ImageInput>  
                 }}

@@ -89,7 +89,11 @@ const categoryList = [
           auth: false,
           handler: function (request, reply) {
             console.log(request.params);
-            categoryList.splice(+request.params.id, 1);
+            
+              var index = categoryList.map(x => {
+                return x.id;
+              }).indexOf(+request.params.id); 
+            categoryList.splice( index, 1);
             console.log('after splice: ', categoryList);
             const response = reply.response({id:request.params.id });
             response.header('Access-Control-Expose-Headers', 'Content-Range');
