@@ -234,7 +234,7 @@ export const CategoriesCreate = (props) => {
                     if(formData && !formData.whoCanDelete) { formData.whoCanDelete = []; }
                     console.log('FormDataConsumer:', formData)
                     return formData.makeLive &&
-                <DateInput validate={(v)=>console.log(v)} source="published_at" label="Expiry date" /> }}
+                <DateInput validate={(v)=>console.log(v)} source="published_at" label="Expiry date" validate={[required()]}/> }}
             </FormDataConsumer>
             <CheckboxGroupInput source="whoCanDelete" label="Who can delete this category" choices={[
                 { id: 'admin', name: 'Admin' },

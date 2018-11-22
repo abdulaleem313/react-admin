@@ -52,7 +52,7 @@ const categoryList = [
             console.log( query)
             console.log( sort)
             let direction = sort[1] == 'ASC' ? 1: -1;
-            let arr = query.q ? categoryList.filter((v)=> v.name == query.q) : categoryList;
+            let arr = query.q ? categoryList.filter((v)=> v.name.indexOf(query.q) > -1  || v.description.indexOf(query.q) > -1 ) : categoryList;
             arr = arr.sort((a,b) => (a.name > b.name) ? -direction : ((b.name > a.name) ? direction : 0)); 
             arr = arr.slice(range[0], range[1]) 
             const response = reply.response(arr);
