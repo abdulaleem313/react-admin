@@ -22,6 +22,7 @@ import {
     SelectInput,
     BooleanInput,
     FormDataConsumer,
+    NumberInput,
     DateTimeInput, CheckboxGroupInput, RadioButtonGroupInput, SelectArrayInput } from 'react-admin'; 
 import Dropzone from 'react-dropzone'
 import withStyles from '@material-ui/core/styles/withStyles';
@@ -54,6 +55,11 @@ const listStyles = {
         value => value && isNaN(Number(value)) ? message : undefined;
     const minValue = (min, message = 'Too small') =>
         value => value && value < min ? message : undefined;
+
+    const isUrlValid = (min, message = 'Not a valid web link') =>
+        value => value && !value.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g) ? message : undefined;
+ 
+    const validateName = [required(), minLength(2), maxLength(10)] 
 
 // ---- validation end ------
 
@@ -131,8 +137,11 @@ export const CategoryEdit = props => {
     return (
     <Edit  title={<CategoryTitle />}  {...props}>
         <SimpleForm>
-            <TextInput source="name" /> 
+            <TextInput source="name" validate={validateName} />  
             <LongTextInput source="description" />
+            <TextInput source="webLink" validate={[required(), isUrlValid()]} />  
+            <NumberInput source="onlyNumber" validate={[required()]} />  
+
             <SelectInput source="type" choices={[
                 { id: 'programming', name: 'Programming' },
                 { id: 'lifestyle', name: 'Lifestyle' },
@@ -178,12 +187,13 @@ export const CategoriesCreate = (props) => {
     let categoriesImagePath = "https://s3-us-west-1.amazonaws.com/zenfoods/categories/thumbnail/";
     // console.log('categories', this.props);
 
-    const validateName = [required(), minLength(2), maxLength(10)]
     return (
     <Create title={<CategoryTitle />} redirect="view" {...props}>
         <SimpleForm  >
             <TextInput source="name" validate={validateName} />  
             <LongTextInput source="description" />
+            <TextInput source="webLink" validate={[required(), isUrlValid()]} />  
+            <NumberInput source="onlyNumber" validate={[required()]} />  
             
             <FormDataConsumer> 
                 {({ formData, ...rest }) => {
