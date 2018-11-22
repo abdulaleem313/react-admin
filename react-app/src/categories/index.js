@@ -42,6 +42,22 @@ const listStyles = {
 };
 
 
+// validatoin
+    const required = (message = 'Required') =>
+    value => value ? undefined : message;
+    const maxLength = (max, message = 'This field is Too long') =>
+        value => value && value.length > max ? message : undefined;
+        
+    const minLength = (min, message = 'This field is Too short') =>
+    value => value && value.length < min ? message : undefined;
+    const number = (message = 'Must be a number') =>
+        value => value && isNaN(Number(value)) ? message : undefined;
+    const minValue = (min, message = 'Too small') =>
+        value => value && value < min ? message : undefined;
+
+// ---- validation end ------
+
+
 const PostActions = ({
     bulkActions,
     basePath,
@@ -116,8 +132,7 @@ export const CategoryEdit = props => {
     <Edit  title={<CategoryTitle />}  {...props}>
         <SimpleForm>
             <TextInput source="name" /> 
-            <TextInput source="description" />  
-             
+            <LongTextInput source="description" />
             <SelectInput source="type" choices={[
                 { id: 'programming', name: 'Programming' },
                 { id: 'lifestyle', name: 'Lifestyle' },
@@ -162,11 +177,13 @@ export const CategoriesCreate = (props) => {
     let categoriesThumbnailsPath =  "https://s3-us-west-1.amazonaws.com/zenfoods/categories/thumbnail/";
     let categoriesImagePath = "https://s3-us-west-1.amazonaws.com/zenfoods/categories/thumbnail/";
     // console.log('categories', this.props);
+
+    const validateName = [required(), minLength(2), maxLength(10)]
     return (
     <Create title={<CategoryTitle />} redirect="view" {...props}>
         <SimpleForm  >
-            <TextInput source="name" /> 
-            <TextInput source="description" />  
+            <TextInput source="name" validate={validateName} />  
+            <LongTextInput source="description" />
             
             <FormDataConsumer> 
                 {({ formData, ...rest }) => {
